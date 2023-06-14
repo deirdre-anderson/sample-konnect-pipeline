@@ -23,11 +23,11 @@ jobs:
       with:
         command: "validate"
         options: "--konnect-token ${{ secrets.System_Account_Token }}" 
-        runtime_group: "lob_prod"
+        runtime_group: "lob_dev"
     - name: decK diff
       id: decK_diff
       uses: ./
       with:
         command: "diff"
-        options: "--konnect-token ${{ secrets.System_Account_Token }} --konnect-runtime-group-name lob_dev " 
-        runtime_group: "lob_prod"
+        options: "--konnect-token ${{ secrets.System_Account_Token }} --konnect-runtime-group-name lob_dev" 
+        runtime_group: "lob_dev"
