@@ -1,6 +1,0 @@
----
-readable_by: '*'
-layout: system/create-app.html
-private: true
-title: Create Application
----
