@@ -115,7 +115,7 @@ services:
     id: e426f266-186a-4d37-bb5a-c5d92102b9a9
     path_handling: v0
     paths:
-    - /httpbin
+    - /echoit
     plugins:
     - config:
         anonymous: null
