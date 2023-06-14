@@ -29,5 +29,5 @@ jobs:
       uses: ./
       with:
         command: "diff"
-        options: "--konnect-token ${{ secrets.System_Account_Token }} " 
+        options: "--konnect-token ${{ secrets.System_Account_Token }} --konnect-runtime-group-name lob_dev " 
         runtime_group: "lob_dev"
