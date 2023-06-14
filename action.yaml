@@ -5,10 +5,10 @@ inputs:
     description: 'A decK command you want to execute'
     required: true
     default: 'ping'
-  kong_workspaces:
-    description: 'Kong workspaces where yaml files are located'
+  runtime_group:
+    description: 'Targetted Runtime'
     required: true
-    default: 'kong'
+    default: 'default'
   options:
     description: 'Option parameters for a decK command'
     required: false
@@ -17,5 +17,5 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.command }}
-    - ${{ inputs.kong_workspaces }}
+    - ${{ inputs.runtime_group }}
     - ${{ inputs.options }}

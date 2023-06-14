@@ -1,0 +1,255 @@
+_format_version: "3.0"
+_konnect:
+  runtime_group_name: lob_dev
+consumer_groups:
+- name: gold
+  plugins:
+  - config:
+      limit:
+      - 100
+      window_size:
+      - 60
+      window_type: sliding
+    name: rate-limiting-advanced
+- name: silver
+  plugins:
+  - config:
+      limit:
+      - 50
+      window_size:
+      - 60
+      window_type: sliding
+    name: rate-limiting-advanced
+consumers:
+- groups:
+  - name: silver
+  keyauth_credentials:
+  - key: bill
+  username: bill@company.com
+- groups:
+  - name: gold
+  username: deirdre.anderson@konghq.com
+- groups:
+  - name: gold
+  keyauth_credentials:
+  - key: ellie
+  username: ellie@example.com
+- groups:
+  - name: gold
+  keyauth_credentials:
+  - key: joel
+  username: joel@example.com
+- keyauth_credentials:
+  - key: nobody
+  username: nobody@testing.com
+- username: somethingnew
+- groups:
+  - name: silver
+  keyauth_credentials:
+  - key: tess
+  username: tess@company.com
+- keyauth_credentials:
+  - key: testkey
+  username: test
+plugins:
+- config:
+    access:
+    - |2-
+        local uri = kong.request.get_path()
+        local querystring = kong.request.get_raw_query()
+
+        if not ngx.re.match(uri, "/$") then
+          uri = uri .. "/" -- add slash
+
+          if querystring ~= "" then
+            uri = uri .. "?" .. querystring
+          end
+
+          kong.response.set_header("location", uri)
+          kong.response.exit(301, "Adding slash...")
+        end
+    body_filter: []
+    certificate: []
+    functions: []
+    header_filter: []
+    log: []
+    rewrite: []
+    ws_client_frame: []
+    ws_close: []
+    ws_handshake: []
+    ws_upstream_frame: []
+  enabled: true
+  name: pre-function
+  protocols:
+  - grpc
+  - grpcs
+  - http
+  - https
+  - ws
+  - wss
+- config:
+    bandwidth_metrics: true
+    latency_metrics: true
+    per_consumer: true
+    status_code_metrics: true
+    upstream_health_metrics: false
+  enabled: false
+  name: prometheus
+  protocols:
+  - grpc
+  - grpcs
+  - http
+  - https
+services:
+- connect_timeout: 60000
+  enabled: true
+  host: httpbin.org
+  name: httpbin.org
+  path: /
+  port: 443
+  protocol: https
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - hosts:
+    - api.kong.lan
+    https_redirect_status_code: 426
+    id: e426f266-186a-4d37-bb5a-c5d92102b9a9
+    path_handling: v0
+    paths:
+    - /httpbin
+    plugins:
+    - config:
+        anonymous: null
+        hide_credentials: false
+      enabled: false
+      name: basic-auth
+      protocols:
+      - grpc
+      - grpcs
+      - http
+      - https
+      - ws
+      - wss
+    - config:
+        functions:
+        - "return function(status, body, headers)\n    if status == 401 then \n      body.message
+          = \"Unauthorized\"\n    end\n    if status == 403 then\n      body.message
+          = \"You are forbidden\"\n    end \n    if status == 429 then\n        body.message
+          = \"Retry again later\"\n    end \n    return status, body, headers\nend"
+        handle_unexpected: true
+        handle_unknown: true
+      enabled: false
+      name: exit-transformer
+      protocols:
+      - grpc
+      - grpcs
+      - http
+      - https
+    - config:
+        day: null
+        error_code: 429
+        error_message: API rate limit exceeded
+        fault_tolerant: true
+        header_name: null
+        hide_client_headers: false
+        hour: null
+        limit_by: ip
+        minute: 5
+        month: null
+        path: null
+        policy: local
+        redis_database: 0
+        redis_host: null
+        redis_password: null
+        redis_port: 6379
+        redis_server_name: null
+        redis_ssl: false
+        redis_ssl_verify: false
+        redis_timeout: 2000
+        redis_username: null
+        second: 5
+        year: null
+      enabled: false
+      name: rate-limiting
+      protocols:
+      - grpc
+      - grpcs
+      - http
+      - https
+    - config:
+        add:
+          headers: []
+          if_status: []
+          json: []
+          json_types: []
+        allow:
+          json: null
+        append:
+          headers: []
+          if_status: []
+          json: []
+          json_types: []
+        dots_in_keys: true
+        remove:
+          headers: []
+          if_status: []
+          json: []
+        rename:
+          headers: []
+          if_status: []
+        replace:
+          body: null
+          headers: []
+          if_status:
+          - "401"
+          - "403"
+          json:
+          - error:Unauthorized
+          json_types: []
+        transform:
+          functions: []
+          if_status: []
+          json: []
+      enabled: false
+      name: response-transformer-advanced
+      protocols:
+      - grpc
+      - grpcs
+      - http
+      - https
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: true
+  host: mockbin.org
+  name: mockbin.org
+  path: /echo
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - hosts:
+    - api.kong.lan
+    https_redirect_status_code: 426
+    id: 5687c284-1975-459c-b7ad-30bdee4628ad
+    path_handling: v0
+    paths:
+    - /mockbin
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+  write_timeout: 60000
