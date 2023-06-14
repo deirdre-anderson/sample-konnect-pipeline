@@ -1,6 +1,4 @@
 _format_version: "3.0"
-_konnect:
-  runtime_group_name: lob_dev
 consumer_groups:
 - name: gold
   plugins:
@@ -44,7 +42,7 @@ consumers:
   username: nobody@testing.com
 - username: somethingnew
 - groups:
-  - name: silver
+  - name: gold
   keyauth_credentials:
   - key: tess
   username: tess@company.com
